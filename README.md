@@ -29,11 +29,11 @@ Finder is a voice-activated desktop assistant built using Python. It can respond
 
 Install required Python packages:
 
-    ```bash
-    pip install speechrecognition wikipedia pyttsx3 pyaudio
-    pip install pipwin
-    pipwin install pyaudio
-    ```
+   ```bash
+   pip install speechrecognition wikipedia pyttsx3 pyaudio
+   pip install pipwin
+   pipwin install pyaudio
+   ```
 
 ## 🧠 Technologies Used
 - speech_recognition — for converting voice to text
