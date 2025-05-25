@@ -9,7 +9,7 @@ import sys
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)  # Fixed 'voices' to 'voice'
+engine.setProperty('voice', voices[0].id)  
 
 
 def speak(audio):
@@ -48,7 +48,7 @@ def textCommand():
     return question.lower()
 
 
-def sendEmail(to, content):  # First you have to enable "Less secure Apps"
+def sendEmail(to, content):  
     try:
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.ehlo()
@@ -69,7 +69,7 @@ wish()
 contacts = {
     'alice': 'alice@example.com',
     'bob': 'bob@example.com'
-}
+} # Your emergency contacts
 
 while True:
     question = textCommand()
