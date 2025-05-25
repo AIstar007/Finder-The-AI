@@ -65,8 +65,5 @@ Install required Python packages:
 - Ensure your microphone is enabled and accessible by Python.
 - You can personalize Finder-The-AI with your own greetings or functionality.
 
-## 📃 License
-This project is open-source and free to use under the **MIT License.**
-
 ## 🤝 Contributing
 **Feel free to fork this repository, enhance the assistant’s abilities, or contribute new features via pull requests.**
