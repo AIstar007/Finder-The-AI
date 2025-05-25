@@ -3,14 +3,13 @@ import speech_recognition as sr
 import wikipedia
 import pyttsx3
 import webbrowser
-import os
-import random
 import smtplib
+import sys
 
 
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
-engine.setProperty('voices', voices[0].id)
+engine.setProperty('voice', voices[0].id)  # Fixed 'voices' to 'voice'
 
 
 def speak(audio):
@@ -40,138 +39,120 @@ def textCommand():
     try:
         print("Recognizing.....")
         question = r.recognize_google(audio, language='en-in')
-       # question = r.recognize_google(audio, language='en-in')
         print(f"User said: {question}\n")
 
-    except Exception as e:
-        # print(e)
+    except Exception:
         print("Say that again please")
         speak("please say that again")
         return "none"
-    return question
-
-    # Send Email function
+    return question.lower()
 
 
 def sendEmail(to, content):  # First you have to enable "Less secure Apps"
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.ehlo()
+        server.starttls()
+        sender_email = input("Enter your Email : ")
+        sender_password = input("Enter your Password : ")
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, to, content)
+        server.close()
+        speak("Email has been sent!")
+    except Exception as e:
+        print(f"Error: {e}")
+        speak("Sorry sir, I have failed to send the email")
 
-    # Create a SMTP object for connection with server
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-
-    server.ehlo()  # to identify itself when connecting to another email server to start the process of sending an email
-
-    # TLS connection required by gmail
-    server.starttls()  # to turn an existing insecure connection into a secure one
-
-    server.login(input("Enter your Email : "), input(
-        "Enter your Password : "))  # Your Email and Password
-
-    server.sendmail(input("Enter sender Email : "),
-                    to, content)  # Sender Email
-
-    server.close()  # Close the server
 
 wish()
 
+contacts = {
+    'alice': 'alice@example.com',
+    'bob': 'bob@example.com'
+}
+
 while True:
-    question = textCommand().lower()
+    question = textCommand()
+
     if 'wikipedia' in question:
         speak("Searching Wikipedia...")
         question = question.replace("wikipedia", "")
-        results = wikipedia.summary(question, sentences=2)
-        speak("According to wikipedia")
-        print(results)
-        speak(results)
+        try:
+            results = wikipedia.summary(question, sentences=2)
+            speak("According to wikipedia")
+            print(results)
+            speak(results)
+        except Exception:
+            speak("Sorry, I could not find any information on that topic.")
+
     elif 'open youtube' in question:
-        webbrowser.open("youtube.com")
+        webbrowser.open("https://youtube.com")
+
     elif 'open google' in question:
-        webbrowser.open("google.com")
+        webbrowser.open("https://google.com")
+
     elif 'my name' in question:
-        speak(question)
-        print(speak)
+        speak("You asked about your name, but I don't know it yet!")
+
     elif 'time' in question:
-        hour = str(int(datetime.datetime.now().hour))
-        min = str(int(datetime.datetime.now().minute))
-        time = (hour+"hours"+min+"minutes")
-        speak(time)
+        now = datetime.datetime.now()
+        time_str = now.strftime("%I:%M %p")
+        speak(f"The time is {time_str}")
+
     elif 'date' in question:
-        date = str(int(datetime.datetime.now().day))
-        mon = str(datetime.datetime.now().month)
-        year = str(int(datetime.datetime.now().year))
-        speak(date)
-        speak(mon)
-        speak(year)
+        now = datetime.datetime.now()
+        date_str = now.strftime("%B %d, %Y")
+        speak(f"Today's date is {date_str}")
+
     elif 'your name' in question:
         speak("My name is Finder")
-        print(speak)
-    elif 'open google' in question:
-        webbrowser.open("google.com")
-    elif 'tomorrow' in question:
-        date = str(int(datetime.datetime.now().day) + 1)
-        speak(date)
-    elif 'is this a leap year' in question:
-        year = int(datetime.datetime.now().year)
-        l = year % 4
-        if l == 0:
-            print("Leap-Year")
-            speak("Yes this is a leap year")
-        else:
 
-            print("Not a Leap-Year")
-            speak("No this is not a leap year")   
+    elif 'tomorrow' in question:
+        tomorrow = datetime.datetime.now() + datetime.timedelta(days=1)
+        speak(tomorrow.strftime("Tomorrow will be %B %d, %Y"))
+
+    elif 'is this a leap year' in question:
+        year = datetime.datetime.now().year
+        if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)):
+            speak("Yes, this is a leap year.")
+        else:
+            speak("No, this is not a leap year.")
+
     elif 'open instagram' in question:
-        webbrowser.open('instagram.com')
-    
+        webbrowser.open('https://instagram.com')
+
     elif 'email to' in question:
         try:
-            name = list(question.split())  # extract receiver's name
-            name = name[name.index('to') + 1]
-            speak("What should I say sir?")
-            content = takeCommand()
-            to = dict[name]  # Your email address
-            sendEmail(to, content)
-            print("Email has been sent!")
-            speak("Email has been sent!")
-        except Exception as e:
-            # print(e)  # Print the exception for debugging
-            print("Failed to send Email!")
-            speak("Sorry sir, I have failed to send the email")
-    elif 'email to' in question:
-        try:
-            name = list(question.split())  # extract receiver's name
-            name = name[name.index('to') + 1]
-            speak("What should I say sir?")
-            content = takeCommand()
-            to = dict[name]  # Your email address
-            sendEmail(to, content)
-            print("Email has been sent!")
-            speak("Email has been sent!")
-        except Exception as e:
-            # print(e)  # Print the exception for debugging
-            print("Failed to send Email!")
-            speak("Sorry sir, I have failed to send the email")
+            words = question.split()
+            name = words[words.index('to') + 1]
+            if name in contacts:
+                speak("What should I say sir?")
+                content = textCommand()
+                if content == "none":
+                    speak("Email cancelled.")
+                    continue
+                to = contacts[name]
+                sendEmail(to, content)
+            else:
+                speak(f"Sorry, I don't have an email address for {name}")
+        except Exception:
+            speak("Sorry sir, I couldn't process the email command.")
+
     elif 'who are you' in question:
-        print("I am Finder. An AI Featured Destop Assistant")
-        speak("I am Finder. An AI Featured Destop Assistant")
-    elif 'How are you' in question:
-        print("I am well sir, How are you")
-        speak("I am well sir, How are you")
+        speak("I am Finder. An AI Featured Desktop Assistant")
+
+    elif 'how are you' in question:
+        speak("I am well sir, How are you?")
 
     elif 'i am well' in question:
-        print("Have a nice day sir")
         speak("Have a nice day sir")
 
     elif 'i am not well' in question:
-        print("Sorry about that sir, may you recover soon")
         speak("Sorry about that sir, may you recover soon")
-    elif 'exit' in question:
-        print("Exiting...")
-        exit()
 
-    elif 'quit' in question:
-        print("Quitting...")
-        exit()
+    elif 'exit' in question or 'quit' in question:
+        speak("Exiting...")
+        sys.exit()
 
-     
-
-
+    else:
+        speak("I didn't understand that. Please say it again.")
