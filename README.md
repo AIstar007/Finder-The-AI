@@ -28,7 +28,6 @@ Finder is a voice-activated desktop assistant built using Python. It can respond
 ## 🛠️ Requirements
 
 Install required Python packages:
-
     ```bash
     pip install speechrecognition wikipedia pyttsx3 pyaudio
     pip install pipwin
