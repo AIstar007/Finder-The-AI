@@ -33,7 +33,7 @@ Install required Python packages:
     pip install speechrecognition wikipedia pyttsx3 pyaudio
     pip install pipwin
     pipwin install pyaudio
-    
+    ```
 
 ## 🧠 Technologies Used
 - speech_recognition — for converting voice to text
@@ -45,3 +45,28 @@ Install required Python packages:
 - os & random — for optional desktop control or randomness
 
 ## 📝 How to Use
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/Finder-The-AI.git
+   cd Finder-The-AI
+
+2. **Run the script:**
+   ```bash
+   python finder.py
+
+3. **Start speaking! Try commands like:**
+   - "Tell me the time"
+   - "Search Wikipedia for Artificial Intelligence"
+   - "Open YouTube"
+   - "Send email to [recipient]"
+
+## 📌 Notes
+- Ensure your microphone is enabled and accessible by Python.
+- You can personalize Finder-The-AI with your own greetings or functionality.
+
+## 📃 License
+This project is open-source and free to use under the **MIT License.**
+
+## 🤝 Contributing
+**Feel free to fork this repository, enhance the assistant’s abilities, or contribute new features via pull requests.**
