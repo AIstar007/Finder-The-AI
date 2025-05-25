@@ -1,0 +1,5 @@
+speechrecognition
+wikipedia
+pyttsx3
+pyaudio
+pipwin-->pyaudio
